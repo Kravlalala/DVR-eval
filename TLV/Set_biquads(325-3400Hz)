@@ -1,0 +1,35 @@
+                           #Bandwidth(300-3400Hz)
+w 30 00 00
+#Set PRB2
+w 30 3D 02
+#Poweroff
+w 30 51 00
+
+#Set coefficients
+w 30 00 04
+#BqA left
+w 30 0E 7E 21 81 DF 7E 21 7E 1E 83 B6
+#BqB left
+w 30 18 01 84 01 84 01 84 6A D6 A4 43 
+#BqC left
+w 30 22 7F FF 00 00 00 00 00 00 00 00
+#BqD left
+w 30 2C 7F FF 00 00 00 00 00 00 00 00
+#BqE left
+w 30 36 7F FF 00 00 00 00 00 00 00 00
+
+#BqA right 
+w 30 4E 7E 21 81 DF 7E 21 7E 1E 83 B6 
+#BqB right
+w 30 58 01 84 01 84 01 84 6A D6 A4 43
+#BqC right 
+w 30 62 7F FF 00 00 00 00 00 00 00 00
+#BqD right
+w 30 6C 7F FF 00 00 00 00 00 00 00 00 
+#BqE right
+w 30 76 7F FF 00 00 00 00 00 00 00 00
+
+#Power on
+w 30 00 00
+w 30 51 C0
+w 30 52 00

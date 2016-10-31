@@ -1,0 +1,27 @@
+                          #Set line-in
+#Reset
+w 30 00 00
+w 30 01 01
+d 100
+w 30 00 00
+#Clock settings
+w 30 12 81 82
+#Audio interface
+w 30 1B 00
+#DSP block
+w 30 3D 01
+#MICBIAS power off
+w 30 00 01
+w 30 33 00
+#Input selection
+w 30 34 FC
+w 30 37 FC
+#Set PGA
+w 30 3b 00
+w 30 3c 00
+#ADC Power on
+w 30 00 00
+w 30 51 C2
+#Unmute channels
+w 30 52 00
+

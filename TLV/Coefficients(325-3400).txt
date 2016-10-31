@@ -1,0 +1,22 @@
+Text "* Sample Rate = 44100"
+Text "* Filter 1 High Pass 2nd Order Butterworth, 146 Hz Fc 0.3 dB "
+Text "* Filter 2 Low Pass 2nd Order Butterworth, 1653 Hz Fc 0.0 dB "
+
+Text "* BQ: H(z) = (N0 + 2*N1/z + N2/(z2)) / (32768 - 2*D1/z - D2/(z2))"
+Text "* Filter Coefficients in format N0, N1, N2, D1, D2"
+
+Text "* 1O: H(z) = (N0 + N1/z) / (32768 - D1/z)"
+Text "* Filter Coefficients in format N0, N1, D1"
+
+Text "* Filter 1 BQ "
+0x7FFF
+0x8001
+0x7FFF
+0x7E1C
+0x83B8
+Text "* Filter 2 BQ "
+0x0184
+0x0184
+0x0184
+0x6AD5
+0xA444

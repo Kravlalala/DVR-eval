@@ -1,0 +1,19 @@
+                           #Left AGC
+
+w 30 00 00
+#Left channel
+#Hysteresis and noise threshold
+w 30 57 9E 
+#Max gain PGA
+w 30 58 2E
+#Attack time
+w 30 59 50
+#Decay time
+w 30 5A 00
+#Noise debounce
+w 30 5B 0C 
+#Signal debounce
+w 30 5C 03
+#Enable and target level
+w 30 56 C0
+

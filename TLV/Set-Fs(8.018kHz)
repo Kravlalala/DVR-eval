@@ -1,0 +1,36 @@
+                         #Set Fs to 8.018kHz
+#Reset
+w 30 00 00
+w 30 01 01
+d 100
+# Clock Settings MCLK = 11.2896 MHz
+w 30 00 00
+# NADC = 11 
+w 30 12 8A
+#MADC = 4
+w 30 13 84
+#AOSR = 32
+w 30 14 20
+#IADC = 124
+w 30 15 3E
+# Default Setting: I2S, 16-bits, Slave Mode (BCLK and WCLK are inputs), 3-stating of DOUT disabled
+w 30 1B 00
+# Set the ADC Mode to PRB_P14
+w 30 3D 0E
+
+# Line in setup
+#MICBIAS power off
+w 30 00 01
+w 30 33 00
+#Input selection
+w 30 34 FC
+w 30 37 FC
+#Set PGA
+w 30 3B 00
+w 30 3C 00
+#ADC Power on
+w 30 00 00
+w 30 51 C2
+#Unmute channels
+w 30 52 00
+

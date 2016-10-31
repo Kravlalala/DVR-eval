@@ -1,0 +1,29 @@
+                       #Start up initialize
+#Reset
+w 30 00 00
+w 30 01 01
+w 30 00 00
+#Freq parameters
+w 30 12 81 
+w 30 13 82
+#ADC interface control
+w 30 1B 00
+#DSP block
+w 30 3D 01
+#Config peripherial
+w 30 00 01
+#MICBIAS
+w 30 33 50
+#Set L and R ADC inputs
+w 30 34 FC
+w 30 37 FC
+#Set L and R PGA settings
+w 30 3B 32
+w 30 3C 32
+#Power up
+w 30 00 00
+w 30 51 C2
+#Unmute
+w 30 52 00
+
+
