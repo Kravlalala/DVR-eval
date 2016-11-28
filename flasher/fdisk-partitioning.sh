@@ -1,6 +1,6 @@
 #!/bin/bash
-echo "***************************************************************"
-echo "Sitara Partitioning Script - 23.11.2016"
+echo "********************************************"
+echo "Sitara Partitioning Script - 28.11.2016"
 
 #Choose device
 DRIVE="/dev/mmcblk0"
@@ -17,7 +17,7 @@ echo "eMMC size: $GB Gb"
 
 #Function for checking mounted eMMC partitions
 check_mounted(){
-	if grep -q ${DRIVE} /proc/mounts; then
+	if grep -q ${DRIVE}p /proc/mounts; then
 
 		#Check mounted partitions
 		is_mounted=`grep ${DRIVE}p /proc/mounts | awk '{print $2}'`
@@ -29,7 +29,7 @@ check_mounted(){
 		case "$item" in
     		y|Y) 	
     			#Erase start blocks in every partition
-				echo "***Clearing eMMC***"
+				echo "************Clearing eMMC************"
 				echo "Unmounting partitions "
 				umount $is_mounted
 				counter=1
@@ -40,11 +40,11 @@ check_mounted(){
 				done
         	;;
     		n|N) 
-				echo "***cancelled from erasing***"
+				echo "**************Cancelled**************"
 				exit
 			;;
-    		*) 
-				echo "***cancelled from erasing***"
+    		*) 	
+				echo "**************Cancelled**************"
 				exit
         	;;
 		esac
@@ -53,18 +53,14 @@ check_mounted(){
     fi
 }
 
-
 check_mounted;
-sleep 10
 
 #Partitioning eMMC. This command creates to partitions: 
-#1. Size = 9 cylinders * 255 heads * 63 sectors * 512 bytes/sec = ~70MB, with ID=0x0C(FAT), is bootable,  
-#2. Size=456 cylinders * 255 heads * 63 sectors * 512 bytes/sec= ~3GB  , with EXT3 FS, isn't bootable.
-
-echo "***Creating new partition table***"
+#1. Starting sector 2048 last sector 145407 size= 69MB, with ID=0x0C(FAT), is bootable,  
+#2. Starting sector 145408 last sector default size=3GB  , with EXT3 FS, isn't bootable.
+echo "****Creating new partition table****"
 #Create new partition table
 fdisk $DRIVE <<EOF
-o
 n
 p
 1
@@ -74,7 +70,7 @@ n
 p
 2
 145408
-15249407
+
 t
 1
 b
@@ -88,22 +84,20 @@ EOF
 sleep 2
 
 #Formatting eMMC. This command format boot partition to fat32 and fs partition to ext4
-new_partitions=`ls /dev | grep sdb`
-
-echo "***Formatting boot partition***"
+echo "******Formatting boot partition******"
 mkfs.vfat -F 32 -n "boot" ${DRIVE}p1
-echo "***Formatting rootfs partition***"
-mkfs.ext2 -L "rootfs" ${DRIVE}p2
+echo "*****Formatting rootfs partition*****"
+mke2fs -L "rootfs" -t ext4 -j ${DRIVE}p2
 sync
 sync
-echo "***Formatting done***"
+echo "***********Formatting done***********"
      
 #Mounting new partitions to current filesystem for transfering flashing images
 #Mounting new partitions to current filesystem for transfering flashing images
 mkdir tmp_boot
 mkdir tmp_rootfs
 mount -t vfat ${DRIVE}p1 tmp_boot
-mount -t ext2 ${DRIVE}p2 tmp_rootfs 
+mount -t ext4 ${DRIVE}p2 tmp_rootfs 
 
 echo "********************************************"
 echo "Sitara Partitioning Script is complete."
