@@ -8,6 +8,7 @@ DRIVE="/dev/mmcblk0"
 # Figure out the size of eMMC in Gb 
 SIZE=`fdisk -l $DRIVE | grep Disk | awk '{print $5}'`
 GB=`echo $SIZE '1024 1024 1024 * * / p' | dc`
+CYLINDERS=`echo $SIZE '255 63 512 * * / p' | dc`
 echo "eMMC size: $GB Gb" 
 
 #Confirm 
@@ -60,32 +61,15 @@ check_mounted(){
 check_mounted;
 
 #Partitioning eMMC. This command creates to partitions: 
-#1. Starting sector 2048 last sector 145407 size= 69MB, with ID=0x0C(FAT), is bootable,  
-#2. Starting sector 145408 last sector default size=3GB  , with EXT3 FS, isn't bootable.
+#1. Size = 9 cylinders * 255 heads * 63 sectors * 512 bytes/sec = ~70MB, with ID=0x0C(FAT), is bootable,  
+#2. Size=456 cylinders * 255 heads * 63 sectors * 512 bytes/sec= ~3GB  , with EXT3 FS, isn't bootable.
 echo "****Creating new partition table****"
 #Create new partition table
-fdisk -u='sectors' $DRIVE <<EOF
-n
-p
-1
-2048
-145407
-n
-p
-2
-145408
-
-t
-1
-b
-t
-2
-83
-a
-1
-w
+sfdisk -D -H 255 -S 63 -C $CYLINDERS $DRIVE << EOF
+,9,0x0C,*
+10,,,-
 EOF
-#sleep 2
+sleep 2
 
 #Formatting eMMC. This command format boot partition to fat32 and fs partition to ext4
 echo "******Formatting boot partition******"
