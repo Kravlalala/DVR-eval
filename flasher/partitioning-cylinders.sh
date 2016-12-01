@@ -7,8 +7,8 @@ DRIVE="/dev/mmcblk0"
 
 # Figure out the size of eMMC in Gb 
 SIZE=`fdisk -l $DRIVE | grep Disk | awk '{print $5}'`
-GB=`echo $SIZE '1024 1024 1024 * * / p' | dc`
-CYLINDERS=`echo $SIZE '255 63 512 * * / p' | dc`
+GB=`echo $(($SIZE/1024/1024/1024))`
+CYLINDERS=`echo $(($SIZE/255/63/512))`
 echo "eMMC size: $GB Gb" 
 
 #Confirm 
@@ -65,9 +65,26 @@ check_mounted;
 #2. Size=456 cylinders * 255 heads * 63 sectors * 512 bytes/sec= ~3GB  , with EXT3 FS, isn't bootable.
 echo "****Creating new partition table****"
 #Create new partition table
-sfdisk -D -H 255 -S 63 -C $CYLINDERS $DRIVE << EOF
-,9,0x0C,*
-10,,,-
+fdisk -C $CYLINDERS -H 255 -S 63 $DRIVE <<EOF
+n
+p
+1
+1
+9
+n
+p
+2
+10
+
+t
+1
+b
+t
+2
+83
+a
+1
+w
 EOF
 sleep 2
 
@@ -85,7 +102,7 @@ echo "***********Formatting done***********"
 mkdir tmp_boot
 mkdir tmp_rootfs
 mount -t vfat ${DRIVE}p1 tmp_boot
-mount -t ext4 ${DRIVE}p2 tmp_rootfs 
+mount -t ext2 ${DRIVE}p2 tmp_rootfs 
 
 echo "********************************************"
 echo "Sitara Partitioning Script is complete."

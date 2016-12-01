@@ -7,7 +7,7 @@ DRIVE="/dev/mmcblk0"
 
 # Figure out the size of eMMC in Gb 
 SIZE=`fdisk -l $DRIVE | grep Disk | awk '{print $5}'`
-GB=`echo $SIZE '1024 1024 1024 * * / p' | dc`
+GB=`echo $(($SIZE/1024/1024/1024))`
 echo "eMMC size: $GB Gb" 
 
 #Confirm 
@@ -64,7 +64,8 @@ check_mounted;
 #2. Starting sector 145408 last sector default size=3GB  , with EXT3 FS, isn't bootable.
 echo "****Creating new partition table****"
 #Create new partition table
-fdisk -u='sectors' $DRIVE <<EOF
+fdisk $DRIVE <<EOF
+u
 n
 p
 1
@@ -101,7 +102,7 @@ echo "***********Formatting done***********"
 mkdir tmp_boot
 mkdir tmp_rootfs
 mount -t vfat ${DRIVE}p1 tmp_boot
-mount -t ext4 ${DRIVE}p2 tmp_rootfs 
+mount -t ext2 ${DRIVE}p2 tmp_rootfs 
 
 echo "********************************************"
 echo "Sitara Partitioning Script is complete."
