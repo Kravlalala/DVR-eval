@@ -1,1 +1,1 @@
-This folder containts tiny rootfs for ramdisk creation, ramdisk, based on this filesystem and script for partitioning eMMC
+This folder containts rootfs for ramdisk creation, ramdisk, based on this filesystem, kernel image with initfs, based on attached rootfs, and script for partitioning eMMC
