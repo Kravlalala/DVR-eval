@@ -1,0 +1,17 @@
+1. Добавить в PARH linaro-toolchain:
+
+	export PATH=$HOME/gcc-linaro-4.9-2015.05-x86_64_arm-linux-gnueabihf/bin:$PATH
+
+2. Очистка старых конфигураций:
+
+	Для общей диектории: make CROSS_COMPILE=arm-linux-gnueabihf- distclean
+	Для отдельной директории для сборки: rm -rf ./<build_dir_name>
+
+3. Сборка в отдельной директории(am57x_evm):
+
+	make CROSS_COMPILE=arm-linux-gnueabihf- O=am57x_evm am57xx_evm_config all
+
+P.S
+	Конфигурации для u-boot находятся в sdk/board-support/u-boot-2016.05/include/configs
+	После сборки не забыть добавить путь в PATH: sdk/board-support/u-boot-2016.05/<build_dir_name>/tools 
+

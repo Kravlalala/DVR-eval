@@ -1,0 +1,49 @@
+1. Сбросить старые конфигурации ядра
+
+	make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- distclean
+
+2. Собрать стандартные конфигурации ядра:
+
+	make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- tisdk_am57xx-evm_defconfig
+
+3. Настроить модули ядра:
+
+	make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- menuconfig
+
+4. Сборка образа(zImage):
+
+	make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- zImage
+
+	P.S
+	По умолчанию u-boot бытается загрузить ядро в образе zImage, если используется uImage, необходимо изменить окружение u-boot и загрузку производить командой bootz.
+	Для сборки uImage необходимо добавить в переменные make LOADADDR=0x80000000 или любой другой адрес, откуда будет грузиться ядро:
+
+	make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- LOADADDR=0x80000000 uImage
+
+5. Сборка деревьев ядра:
+
+	make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- am57xx-evm.dtb
+
+	P.S
+	Файлы деревьев ядра находятся в директории:  arch/arm/boot/dts/
+	Файл .dtb необходимо переместить вместе с образом ядра на раздел загрузки файловой системы, если используется eMMC, MMC, SD(для u-boot старше 2013).
+
+6. Сборка модулей ядра(требуется, т.к большинство драйверов по умолчанию не включены в образ ядра):
+	
+	make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- modules
+
+	P.S
+	После сборки модулей, ko файлы находятся в дереве ядра.
+	Если ядро было пересобрано, то модули тоже необходимо пересобрать заново.
+
+7. Установка модулей
+	
+	sudo make ARCH=arm INSTALL_MOD_PATH=<installation_path> modules_install
+
+	P.S
+	Данная команда создаст директорию lib/modules/<kernel version> в директории <installation_path> и добавит туда все исполняемые файлы модулей ядра.
+	(желательная директория: /media/rootfs):
+	sudo make ARCH=arm INSTALL_MOD_PATH=/media/rootfs modules_install	
+
+	
+

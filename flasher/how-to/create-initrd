@@ -1,0 +1,42 @@
+1. Выделить память в устройстве ram0, необходимое для размещения ФС 
+	
+	sudo dd if=/dev/zero of=/dev/ram0 bs=1024 count=4000	
+
+2. Отформатировать его в ext2
+
+	sudo mke2fs -vm0 /dev/ram0 4000 
+
+3. Установка  счетчика числа монтирований для проверки ФС при помощи e2fsk (в данном случае проверка игнорируется) 
+
+	sudo tune2fs -c 0 /dev/ram0 
+
+4. Копировать в пустой файл содержимое ram0 и сжать в любой удобный формат. например, gz
+
+	 sudo dd if=/dev/ram0 bs=1024 count=4000 | gzip -v9 > ramdisk.gz 
+
+5. Разархивировать ramdisk.gz и примонтировать в любую директорию как loop-устройство
+	
+	mkdir mnt
+
+	sudo mount -o loop ramdisk mnt/ или mount –t ext2 ramdisk mnt –o loop
+
+6. Копировать содержимое необходимой файловой системы
+
+	cp -rvf /<rootfs_path> mnt/
+
+8. Размонтировать файл и снова сжать
+
+	sudo umount mnt
+	gzip -v9 ramdisk	
+
+9. Сделать из полученного RAM-disk образ для u-boot
+
+	mkimage -A arm -T ramdisk -C gzip -n 'Test Ramdisk Image' -d ramdisk.gz uRamdisk
+
+
+
+
+
+
+
+

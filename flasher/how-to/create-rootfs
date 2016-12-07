@@ -1,0 +1,87 @@
+1. Скачать подходящую версию busybox
+
+	wget http://busybox.net/downloads/busybox-1.25.1.tar.bz2
+	tar -xjf busybox-1.24.1.tar.bz2
+	cd busybox-1.24.1/
+
+2. Собрать busibox и установить его в диреторию с будущей фс
+
+	make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- defconfig
+
+	make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- menuconfig
+
+	LDFLAGS="--static" make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- -j4
+
+	LDFLAGS="--static" make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- install
+
+	rsync -a _install/ /<path to rootfs>
+
+	cd /<rootfs_path>
+
+	В директории rootfs должно быть следующее:
+	
+	drwxr-xr-x  2 root root 4096 Nov 21 10:20 bin
+	lrwxrwxrwx  1 root root   11 Nov 21 10:20 linuxrc -> bin/busybox
+	drwxr-xr-x  2 root root 4096 Nov 21 10:20 sbin
+	drwxr-xr-x  4 root root 4096 Nov 21 10:20 usr
+
+
+6. Создать недостающие директории
+
+	mkdir dev  dev/pts etc etc/init.d lib mnt opt proc root sys tmp var var/log usr/lib
+	mknod dev/console c 5 1
+
+7. Создать etc/fstab: файл инициализации и монтирования /proc и /sys 
+
+	subl etc/fstab
+
+	Добавить в него:
+
+proc            /proc           proc    defaults        0 0
+none            /dev/pts        devpts  mode=0622       0 0
+
+
+8. Создать в etc файлы для авторизации пользователей и добавить записи для root:
+	
+	cd etc
+
+	subl group прописать в него:  root:x:0:root
+
+	subl passwd прописать в него: root::0:0:root:/root:/bin/ash 
+
+	subl hosts прописать в него:  127.0.0.1       localhost
+
+9. ядро запускает /sbin/init или linuxrc после загрузки. Второй создается вместе с busybox, а
+	первый читает файл etc/inittab, чтобы определить, что делать при старте. Необходимо
+	создать inittab и etc/init.d/rcS, которые будут определять порядок действий при старте
+
+	subl etc/inittab
+
+		Добавить в него:
+
+		::sysinit:/etc/init.d/rcS 
+
+		# /bin/ash
+		#
+		# Start an "askfirst" shell on the serial port
+		console::askfirst:-/bin/ash
+
+		# Stuff to do when restarting the init process
+		::restart:/sbin/init
+
+		# Stuff to do before rebooting
+		::ctrlaltdel:/sbin/reboot
+		::shutdown:/bin/umount -a -r
+		::shutdown:/sbin/swapoff -a
+
+	chmod +x etc/inittab
+
+	subl etc/init.d/rcS
+		#!bin/sh
+		mount -t proc none /proc
+		mount -t sysfs none /sys
+		echo /sbin/mdev > /proc/sys/kernel/hotplug
+		/sbin/mdev -s
+		export PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin
+
+	chmod +x etc/init.d/rcS
