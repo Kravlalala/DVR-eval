@@ -1,2 +1,2 @@
 # DVR-eval
-Scripts for codecs evaluation and linux flashing kernel with partitioning scripts.
+Scripts for codecs evaluation and Linux flashing kernel with partitioning scripts.
